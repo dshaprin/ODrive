@@ -10,8 +10,9 @@
 // Vmax, Amax, Dmax and jmax  Kinematic bounds
 // Ar, Dr and Vr              Reached values of acceleration and velocity
 
-bool TrapezoidalTrajectory::planTrapezoidal(float Xf, float Xi, float Vi,
+bool STrajectory::plan(float Xf, float Xi, float Vi,
                                             float Vmax, float Amax, float Dmax) {
+                                                
     float dX = Xf - Xi;  // Distance to travel
     float stop_dist = (Vi * Vi) / (2.0f * Dmax); // Minimum stopping distance
     float dXstop = std::copysign(stop_dist, Vi); // Minimum stopping displacement
@@ -56,28 +57,44 @@ bool TrapezoidalTrajectory::planTrapezoidal(float Xf, float Xi, float Vi,
     return true;
 }
 
-TrapezoidalTrajectory::Step_t TrapezoidalTrajectory::eval(float t) {
+
+float smoothing_vel(float x) {
+    return 0.5f * (1 - std::cos(x * PI));
+}
+
+float smoothing_s(float x) {
+    return 0.5f * (x - std::sin(PI * x) / PI);
+}
+
+float smoothing_a(float x) {
+    return std::sin(PI * x);
+}
+
+STrajectory::Step_t STrajectory::eval(float t) {
     Step_t trajStep;
     if (t < 0.0f) {  // Initial Condition
-        trajStep.Y   = Xi_;
-        trajStep.Yd  = Vi_;
+        trajStep.Y = Xi_;
+        trajStep.Yd = Vi_;
         trajStep.Ydd = 0.0f;
     } else if (t < Ta_) {  // Accelerating
-        trajStep.Y   = Xi_ + Vi_*t + 0.5f*Ar_*SQ(t);
-        trajStep.Yd  = Vi_ + Ar_*t;
-        trajStep.Ydd = Ar_;
+        float prop_t = t / Ta_;
+        trajStep.Y = Xi_ + Vr_ * Ta_ * smoothing_s(prop_t) + Ta_ * Vi_ * 0.5f;
+        trajStep.Yd = Vi_ + Ar_ * Ta_ * smoothing_vel(prop_t);
+        trajStep.Ydd = 0.5f * PI * Ar_ * smoothing_a(prop_t);
     } else if (t < Ta_ + Tv_) {  // Coasting
-        trajStep.Y   = yAccel_ + Vr_*(t - Ta_);
-        trajStep.Yd  = Vr_;
+        trajStep.Y = yAccel_ + Vr_ * (t - Ta_);
+        trajStep.Yd = Vr_;
         trajStep.Ydd = 0.0f;
     } else if (t < Tf_) {  // Deceleration
-        float td     = t - Tf_;
-        trajStep.Y   = Xf_ + 0.5f*Dr_*SQ(td);
-        trajStep.Yd  = Dr_*td;
-        trajStep.Ydd = Dr_;
+        float td = t - Tf_;
+        float delta_t = (Ta_ + Tv_ - Tf_);  // Duration of deceleration step
+        float prop_t = td / delta_t;
+        trajStep.Y = Xf_ + Dr_ * SQ(delta_t) * smoothing_s(prop_t);
+        trajStep.Yd = Dr_ * delta_t * smoothing_vel(prop_t);
+        trajStep.Ydd = 0.5f * PI * Dr_ * smoothing_a(prop_t);
     } else if (t >= Tf_) {  // Final Condition
-        trajStep.Y   = Xf_;
-        trajStep.Yd  = 0.0f;
+        trajStep.Y = Xf_;
+        trajStep.Yd = 0.0f;
         trajStep.Ydd = 0.0f;
     } else {
         // TODO: report error here

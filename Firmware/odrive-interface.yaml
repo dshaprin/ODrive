@@ -545,6 +545,7 @@ interfaces:
       acim_estimator: AcimEstimator
       sensorless_estimator: SensorlessEstimator
       trap_traj: TrapezoidalTrajectory
+      s_traj: STrajectory
       min_endstop: Endstop
       max_endstop: Endstop
       mechanical_brake: MechanicalBrake
@@ -1398,6 +1399,16 @@ interfaces:
           accel_limit: {type: float32, unit: turn/s^2}
           decel_limit: {type: float32, unit: turn/s^2}
 
+  ODrive.STrajectory:
+    c_is_class: True
+    attributes:
+      config:
+        c_is_class: False
+        attributes:
+          vel_limit: {type: float32, unit: turn/s}
+          accel_limit: {type: float32, unit: turn/s^2}
+          decel_limit: {type: float32, unit: turn/s^2}
+
   ODrive.Endstop:
     c_is_class: True
     attributes:
@@ -1723,6 +1734,22 @@ valuetypes:
           Used for tuning your odrive, this mode allows the user to set different frequencies.
           Set control_mode for the loop you want to tune, then set the frequency desired.
           The ODrive will send a 1 turn amplitude sine wave to the controller with the given frequency and phase.
+      S_TRAJ:
+        brief: Implementes a smooth trajectory planner.
+        doc: |
+          ![Trapezoidal Planner Response](../TrapTrajPosVel.PNG)
+
+          ### Configuration Values:
+          * `Axis:s_traj.config.vel_limit`
+          * `Axis:s_traj.config.accel_limit`
+          * `Axis:s_traj.config.decel_limit`
+          * `config.inertia`
+
+          ### Valid Inputs:
+          * `input_pos`
+
+          ### Valid Control Modes:
+          * `CONTROL_MODE_POSITION_CONTROL`
 
   ODrive.Motor.MotorType:
     values:

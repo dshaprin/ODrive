@@ -73,6 +73,7 @@ INPUT_MODE_TRAP_TRAJ                     = 5
 INPUT_MODE_TORQUE_RAMP                   = 6
 INPUT_MODE_MIRROR                        = 7
 INPUT_MODE_TUNING                        = 8
+INPUT_MODE_S_TRAJ                        = 9
 
 # ODrive.Motor.MotorType
 MOTOR_TYPE_HIGH_CURRENT                  = 0
@@ -229,6 +230,7 @@ class InputMode(enum.Enum):
     TORQUE_RAMP                              = 6
     MIRROR                                   = 7
     TUNING                                   = 8
+    S_TRAJ                                   = 9
 class MotorType(enum.Enum):
     HIGH_CURRENT                             = 0
     GIMBAL                                   = 2

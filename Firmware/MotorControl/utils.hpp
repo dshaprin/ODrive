@@ -156,3 +156,8 @@ inline int mod(const int dividend, const int divisor){
     if (r < 0) r += divisor;
     return r;
 }
+
+// A sign function where input 0 has positive sign (not 0)
+inline float sign_hard(float val) {
+    return (std::signbit(val)) ? -1.0f : 1.0f;
+}
