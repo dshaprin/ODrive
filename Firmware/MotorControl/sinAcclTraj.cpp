@@ -10,7 +10,7 @@
 // Vmax, Amax, Dmax and jmax  Kinematic bounds
 // Ar, Dr and Vr              Reached values of acceleration and velocity
 
-bool STrajectory::plan(float Xf, float Xi, float Vi,
+bool SineAccelerationTrajectory::plan(float Xf, float Xi, float Vi,
                                             float Vmax, float Amax, float Dmax) {
                                                 
     float dX = Xf - Xi;  // Distance to travel
@@ -70,7 +70,7 @@ float smoothing_a(float x) {
     return std::sin(PI * x);
 }
 
-STrajectory::Step_t STrajectory::eval(float t) {
+SineAccelerationTrajectory::Step_t SineAccelerationTrajectory::eval(float t) {
     Step_t trajStep;
     if (t < 0.0f) {  // Initial Condition
         trajStep.Y = Xi_;

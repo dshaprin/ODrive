@@ -545,7 +545,7 @@ interfaces:
       acim_estimator: AcimEstimator
       sensorless_estimator: SensorlessEstimator
       trap_traj: TrapezoidalTrajectory
-      s_traj: STrajectory
+      sin_accl_traj: SineAccelerationTrajectory
       min_endstop: Endstop
       max_endstop: Endstop
       mechanical_brake: MechanicalBrake
@@ -1399,7 +1399,7 @@ interfaces:
           accel_limit: {type: float32, unit: turn/s^2}
           decel_limit: {type: float32, unit: turn/s^2}
 
-  ODrive.STrajectory:
+  ODrive.SineAccelerationTrajectory:
     c_is_class: True
     attributes:
       config:
@@ -1734,15 +1734,15 @@ valuetypes:
           Used for tuning your odrive, this mode allows the user to set different frequencies.
           Set control_mode for the loop you want to tune, then set the frequency desired.
           The ODrive will send a 1 turn amplitude sine wave to the controller with the given frequency and phase.
-      S_TRAJ:
+      SIN_ACCL_TRAJ:
         brief: Implementes a smooth trajectory planner.
         doc: |
           ![Trapezoidal Planner Response](../TrapTrajPosVel.PNG)
 
           ### Configuration Values:
-          * `Axis:s_traj.config.vel_limit`
-          * `Axis:s_traj.config.accel_limit`
-          * `Axis:s_traj.config.decel_limit`
+          * `Axis:sin_accl_traj.config.vel_limit`
+          * `Axis:sin_accl_traj.config.accel_limit`
+          * `Axis:sin_accl_traj.config.decel_limit`
           * `config.inertia`
 
           ### Valid Inputs:

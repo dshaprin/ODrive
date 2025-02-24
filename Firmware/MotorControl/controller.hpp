@@ -77,7 +77,7 @@ public:
 
     // Trajectory-Planned control
     void move_to_pos(float goal_point);
-    void move_to_pos_s_traj(float goal_point);
+    void move_to_pos_sin_accl_traj(float goal_point);
     void move_incremental(float displacement, bool from_goal_point);
 
     // TODO: make this more similar to other calibration loops

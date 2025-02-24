@@ -919,7 +919,7 @@ export let enumVars = {
         5: "INPUT_MODE_TRAP_TRAJ",
         6: "INPUT_MODE_TORQUE_RAMP",
         7: "INPUT_MODE_MIRROR",
-        8: "INPUT_MODE_S_TRAJ",
+        8: "INPUT_MODE_SIN_ACCL_TRAJ",
     },
     control_mode: {
         0: "CONTROL_MODE_VOLTAGE_CONTROL",

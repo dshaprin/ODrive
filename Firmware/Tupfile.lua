@@ -86,7 +86,7 @@ odrive_firmware_pkg = {
         'MotorControl/oscilloscope.cpp',
         'MotorControl/sensorless_estimator.cpp',
         'MotorControl/trapTraj.cpp',
-        'MotorControl/sTraj.cpp',
+        'MotorControl/sinAcclTraj.cpp',
         'MotorControl/pwm_input.cpp',
         'MotorControl/main.cpp',
         'Drivers/STM32/stm32_system.cpp',

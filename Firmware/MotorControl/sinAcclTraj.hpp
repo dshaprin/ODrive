@@ -1,7 +1,7 @@
-#ifndef _S_TRAJ_H
-#define _S_TRAJ_H
+#ifndef _SIN_ACCL_TRAJ_H
+#define _SIN_ACCL_TRAJ_H
 
-class STrajectory {
+class SineAccelerationTrajectory {
 public:
     struct Config_t {
         float vel_limit = 2.0f;   // [turn/s]

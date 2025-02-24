@@ -119,7 +119,7 @@ MechanicalBrake mechanical_brakes[AXIS_COUNT];
 SensorlessEstimator sensorless_estimators[AXIS_COUNT];
 Controller controllers[AXIS_COUNT];
 TrapezoidalTrajectory trap[AXIS_COUNT];
-STrajectory s[AXIS_COUNT];
+SineAccelerationTrajectory s[AXIS_COUNT];
 
 std::array<Axis, AXIS_COUNT> axes{{
     {

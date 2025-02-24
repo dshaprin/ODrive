@@ -37,12 +37,12 @@ void Controller::move_to_pos(float goal_point) {
     trajectory_done_ = false;
 }
 
-void Controller::move_to_pos_s_traj(float goal_point) {
-    axis_->s_traj_.plan(goal_point, pos_setpoint_, vel_setpoint_,
-                                 axis_->s_traj_.config_.vel_limit,
-                                 axis_->s_traj_.config_.accel_limit,
-                                 axis_->s_traj_.config_.decel_limit);
-    axis_->s_traj_.t_ = 0.0f;
+void Controller::move_to_pos_sin_accl_traj(float goal_point) {
+    axis_->sin_accl_traj_.plan(goal_point, pos_setpoint_, vel_setpoint_,
+                                 axis_->sin_accl_traj_.config_.vel_limit,
+                                 axis_->sin_accl_traj_.config_.accel_limit,
+                                 axis_->sin_accl_traj_.config_.decel_limit);
+    axis_->sin_accl_traj_.t_ = 0.0f;
     trajectory_done_ = false;
 }
 
@@ -276,28 +276,28 @@ bool Controller::update() {
             }
             anticogging_pos_estimate = pos_setpoint_; // FF the position setpoint instead of the pos_estimate
         } break;
-        case INPUT_MODE_S_TRAJ: {
+        case INPUT_MODE_SIN_ACCL_TRAJ: {
             if(input_pos_updated_){
-                move_to_pos_s_traj(input_pos_);
+                move_to_pos_sin_accl_traj(input_pos_);
                 input_pos_updated_ = false;
             }
             // Avoid updating uninitialized trajectory
             if (trajectory_done_)
                 break;
             
-            if (axis_->s_traj_.t_ > axis_->s_traj_.Tf_) {
+            if (axis_->sin_accl_traj_.t_ > axis_->sin_accl_traj_.Tf_) {
                 // Drop into position control mode when done to avoid problems on loop counter delta overflow
                 config_.control_mode = CONTROL_MODE_POSITION_CONTROL;
-                pos_setpoint_ = axis_->s_traj_.Xf_;
+                pos_setpoint_ = axis_->sin_accl_traj_.Xf_;
                 vel_setpoint_ = 0.0f;
                 torque_setpoint_ = 0.0f;
                 trajectory_done_ = true;
             } else {
-                STrajectory::Step_t traj_step = axis_->s_traj_.eval(axis_->s_traj_.t_);
+                SineAccelerationTrajectory::Step_t traj_step = axis_->sin_accl_traj_.eval(axis_->sin_accl_traj_.t_);
                 pos_setpoint_ = traj_step.Y;
                 vel_setpoint_ = traj_step.Yd;
                 torque_setpoint_ = traj_step.Ydd * config_.inertia;
-                axis_->s_traj_.t_ += current_meas_period;
+                axis_->sin_accl_traj_.t_ += current_meas_period;
             }
             anticogging_pos_estimate = pos_setpoint_; // FF the position setpoint instead of the pos_estimate
         } break;

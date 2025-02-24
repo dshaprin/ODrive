@@ -88,7 +88,7 @@ enum InputMode {
     INPUT_MODE_TORQUE_RAMP                   = 6,
     INPUT_MODE_MIRROR                        = 7,
     INPUT_MODE_TUNING                        = 8,
-    INPUT_MODE_S_TRAJ                        = 9,
+    INPUT_MODE_SIN_ACCL_TRAJ                 = 9,
 };
 
 // ODrive.Motor.MotorType
