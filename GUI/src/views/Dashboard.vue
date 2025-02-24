@@ -312,7 +312,11 @@ let odriveEnums = {
     {
       text: "Tuning",
       value: 8
-    }
+    },
+    {
+      text: "S Trajectory",
+      value: 9
+    },
   ]
 }
 

@@ -286,6 +286,7 @@ interfaces:
       encoder: Encoder
       sensorless_estimator: SensorlessEstimator
       trap_traj: TrapezoidalTrajectory
+      s_traj: STrajectory
       min_endstop: Endstop
       max_endstop: Endstop
     functions:
