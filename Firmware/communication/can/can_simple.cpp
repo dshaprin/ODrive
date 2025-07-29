@@ -58,6 +58,12 @@ void CANSimple::handle_can_message(const can_Message_t& msg) {
 void CANSimple::do_command(Axis& axis, const can_Message_t& msg) {
     const uint32_t cmd = get_cmd_id(msg.id);
     axis.watchdog_feed();
+    for (uint32_t i = 0; i < sizeof(counted_commands)/sizeof(int); ++i) {
+        if (cmd == counted_commands[i]) {
+            axis.can_.command_counter++;
+            break;
+        }
+    }
     switch (cmd) {
         case MSG_CO_NMT_CTRL:
             break;
@@ -158,6 +164,10 @@ void CANSimple::do_command(Axis& axis, const can_Message_t& msg) {
         case MSG_GET_CONTROLLER_ERROR:
             get_controller_error_callback(axis);
             break;
+        case MSG_GET_COMMAND_COUNTER:
+            if (msg.rtr || msg.len == 0)
+                get_command_counter(axis);
+            break;
         default:
             break;
     }
@@ -215,6 +225,19 @@ bool CANSimple::get_controller_error_callback(const Axis& axis) {
     txmsg.len = 8;
 
     can_setSignal(txmsg, axis.controller_.error_, 0, 32, true);
+
+    return canbus_->send_message(txmsg);
+}
+
+bool CANSimple::get_command_counter(const Axis& axis) {
+    can_Message_t txmsg;
+    txmsg.id = axis.config_.can.node_id << NUM_CMD_ID_BITS;
+    txmsg.id += MSG_GET_COMMAND_COUNTER; 
+    txmsg.isExt = axis.config_.can.is_extended;
+    txmsg.len = 8;
+
+    can_setSignal(txmsg, axis.can_.command_counter, 0, sizeof(axis.can_.command_counter), true);
+    
 
     return canbus_->send_message(txmsg);
 }
@@ -406,7 +429,7 @@ uint32_t CANSimple::service_stack() {
     };
 
     for (auto& axis : axes) {
-        std::array<periodic, 10> periodics = {{
+        std::array<periodic, 11> periodics = {{
             {axis.config_.can.heartbeat_rate_ms, axis.can_.last_heartbeat, &CANSimple::send_heartbeat},
             {axis.config_.can.encoder_rate_ms, axis.can_.last_encoder, &CANSimple::get_encoder_estimates_callback},
             {axis.config_.can.motor_error_rate_ms, axis.can_.last_motor_error, &CANSimple::get_motor_error_callback},
@@ -417,6 +440,7 @@ uint32_t CANSimple::service_stack() {
             {axis.config_.can.iq_rate_ms, axis.can_.last_iq, &CANSimple::get_iq_callback},
             {axis.config_.can.sensorless_rate_ms, axis.can_.last_sensorless, &CANSimple::get_sensorless_estimates_callback},
             {axis.config_.can.bus_vi_rate_ms, axis.can_.last_bus_vi, &CANSimple::get_bus_voltage_current_callback},
+            {axis.config_.can.command_counter_rate_ms, axis.can_.last_command_counter_increment, &CANSimple::get_command_counter}
         }};
 
         MEASURE_TIME(axis.task_times_.can_heartbeat) {
@@ -465,3 +489,4 @@ bool CANSimple::send_heartbeat(const Axis& axis) {
 
     return canbus_->send_message(txmsg);
 }
+

@@ -539,6 +539,7 @@ interfaces:
           sensorless_ramp: LockinConfig
           general_lockin: LockinConfig
           can: CanConfig
+      can: CanValues
       motor: Motor
       controller: Controller
       encoder: Encoder
@@ -609,6 +610,23 @@ interfaces:
       iq_rate_ms: uint32
       sensorless_rate_ms: uint32
       bus_vi_rate_ms: uint32
+      command_counter_rate_ms: uint32
+
+  ODrive.Axis.CanValues:
+    c_is_class: False
+    attributes:
+      last_heartbeat: uint32 
+      last_encoder: uint32 
+      last_motor_error: uint32 
+      last_encoder_error: uint32 
+      last_controller_error: uint32 
+      last_sensorless_error: uint32 
+      last_encoder_count: uint32 
+      last_iq: uint32 
+      last_sensorless: uint32 
+      last_bus_vi: uint32 
+      last_command_counter_increment: uint32 
+      command_counter: uint32 
 
   ODrive.ThermistorCurrentLimiter:
     c_is_class: False

@@ -37,6 +37,7 @@ class CANSimple {
         MSG_SET_VEL_GAINS,
         MSG_GET_ADC_VOLTAGE,
         MSG_GET_CONTROLLER_ERROR,
+        MSG_GET_COMMAND_COUNTER,
         MSG_CO_HEARTBEAT_CMD = 0x700,  // CANOpen NMT Heartbeat  SEND
     };
 
@@ -49,9 +50,9 @@ class CANSimple {
 
     bool renew_subscription(size_t i);
     bool send_heartbeat(const Axis& axis);
-
+    
     void handle_can_message(const can_Message_t& msg);
-
+    
     void do_command(Axis& axis, const can_Message_t& cmd);
     
     // Get functions (msg.rtr bit must be set)
@@ -64,6 +65,7 @@ class CANSimple {
     bool get_iq_callback(const Axis& axis);
     bool get_sensorless_estimates_callback(const Axis& axis);
     bool get_bus_voltage_current_callback(const Axis& axis);
+    bool get_command_counter(const Axis& axis);
     // msg.rtr bit must NOT be set
     bool get_adc_voltage_callback(const Axis& axis, const can_Message_t& msg);
 
@@ -108,6 +110,27 @@ class CANSimple {
     // renew our filter when the node ID changes
     uint32_t node_ids_[AXIS_COUNT];
     bool extended_node_ids_[AXIS_COUNT];
+
+    static constexpr uint32_t counted_commands[] = { 
+        MSG_ODRIVE_ESTOP,
+        MSG_SET_AXIS_NODE_ID,
+        MSG_SET_AXIS_REQUESTED_STATE,
+        MSG_SET_AXIS_STARTUP_CONFIG,
+        MSG_SET_CONTROLLER_MODES,
+        MSG_SET_INPUT_POS,
+        MSG_SET_INPUT_VEL,
+        MSG_SET_INPUT_TORQUE,
+        MSG_SET_LIMITS,
+        MSG_START_ANTICOGGING,
+        MSG_SET_TRAJ_VEL_LIMIT,
+        MSG_SET_TRAJ_ACCEL_LIMITS,
+        MSG_SET_TRAJ_INERTIA,
+        MSG_RESET_ODRIVE,
+        MSG_CLEAR_ERRORS,
+        MSG_SET_LINEAR_COUNT,
+        MSG_SET_POS_GAIN,
+        MSG_SET_VEL_GAINS
+    };
 };
 
 #endif

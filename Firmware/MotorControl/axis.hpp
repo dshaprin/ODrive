@@ -37,7 +37,7 @@ public:
         TaskTimer encoder_update;
         TaskTimer sensorless_estimator_update;
         TaskTimer endstop_update;
-        TaskTimer can_heartbeat;
+        TaskTimer can_heartbeat; 
         TaskTimer controller_update;
         TaskTimer open_loop_controller_update;
         TaskTimer acim_estimator_update;
@@ -65,6 +65,7 @@ public:
         uint32_t iq_rate_ms = 0;
         uint32_t sensorless_rate_ms = 0;
         uint32_t bus_vi_rate_ms = 0;
+        uint32_t command_counter_rate_ms = 0;
     };
 
     struct Config_t {
@@ -118,6 +119,8 @@ public:
         uint32_t last_iq = 0;
         uint32_t last_sensorless = 0;
         uint32_t last_bus_vi = 0;
+        uint32_t last_command_counter_increment = 0;
+        uint32_t command_counter = 0;
     };
 
     Axis(int axis_num,
